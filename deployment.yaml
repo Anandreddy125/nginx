@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-rbac
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-rbac
+  template:
+    metadata:
+      labels:
+        app: nginx-rbac
+    spec:
+      securityContext:
+        runAsNonRoot: false
+        fsGroup: 1500             # readonly-group GID
+      containers:
+        - name: nginx
+          image: anrs125/nginx:v13
+          ports:
+            - containerPort: 80
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              add:
+                - NET_BIND_SERVICE
+                - CHOWN
+                - SETUID
+                - SETGID
+                - DAC_OVERRIDE
+          volumeMounts:
+            - name: sensitive-files
+              mountPath: /etc/nginx/sensitive
+      volumes:
+        - name: sensitive-files
+          secret:
+            secretName: nginx-sensitive-secret
+            defaultMode: 0600
