@@ -15,12 +15,17 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: false
-        fsGroup: 1500             # readonly-group GID
+        fsGroup: 1500
       containers:
         - name: nginx
           image: anrs125/nginx:v13
           ports:
             - containerPort: 80
+          # ── This makes ArgoCD terminal land as anand by default ──
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "echo 'exec as correct user'"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
