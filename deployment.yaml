@@ -18,7 +18,7 @@ spec:
         fsGroup: 1500
       containers:
         - name: nginx
-          image: anrs125/nginx:v15
+          image: anrs125/nginx:v16
           ports:
             - containerPort: 80
           # ── This makes ArgoCD terminal land as anand by default ──
@@ -36,6 +36,7 @@ spec:
                 - SETUID
                 - SETGID
                 - DAC_OVERRIDE
+                - FOWNER
           volumeMounts:
             - name: sensitive-files
               mountPath: /etc/nginx/sensitive
