@@ -18,7 +18,7 @@ spec:
         fsGroup: 1500
       containers:
         - name: nginx
-          image: anrs125/nginx:v26
+          image: anrs125/nginx:v27
           ports:
             - containerPort: 80
           # ── This makes ArgoCD terminal land as anand by default ──
