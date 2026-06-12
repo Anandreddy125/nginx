@@ -17,31 +17,32 @@ spec:
         runAsNonRoot: false
         fsGroup: 1500
       containers:
-        - name: nginx
-          image: anrs125/nginx:v32
-          ports:
-            - containerPort: 80
-          # ── This makes ArgoCD terminal land as anand by default ──
-          lifecycle:
-            postStart:
-              exec:
-                command: ["/bin/sh", "-c", "echo 'exec as correct user'"]
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-              add:
-                - NET_BIND_SERVICE
-                - CHOWN
-                - SETUID
-                - SETGID
-                - DAC_OVERRIDE
-                - FOWNER
-          volumeMounts:
-            - name: sensitive-files
-              mountPath: /etc/nginx/sensitive
-      volumes:
+      - name: nginx
+        image: anrs125/nginx:v32
+        ports:
+        - containerPort: 80
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            drop: ["ALL"]
+            add:
+              - NET_BIND_SERVICE
+              - CHOWN
+              - SETUID
+              - SETGID
+              - DAC_OVERRIDE
+              - FOWNER
+        volumeMounts:
         - name: sensitive-files
-          secret:
-            secretName: nginx-sensitive-secret
-            defaultMode: 0600
+          mountPath: /etc/nginx/sensitive
+        # ✅ PVC mounted here — shadow file persists across restarts
+        - name: shadow-pvc
+          mountPath: /data
+      volumes:
+      - name: sensitive-files
+        secret:
+          secretName: nginx-sensitive-secret
+          defaultMode: 0600
+      - name: shadow-pvc
+        persistentVolumeClaim:
+          claimName: nginx-shadow-pvc
