@@ -18,7 +18,7 @@ spec:
         fsGroup: 1500
       containers:
       - name: nginx
-        image: anrs125/nginx:v32
+        image: anrs125/nginx:v33
         ports:
         - containerPort: 80
         securityContext:
