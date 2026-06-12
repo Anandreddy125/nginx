@@ -18,7 +18,7 @@ spec:
         fsGroup: 1500
       containers:
       - name: nginx
-        image: anrs125/nginx:v33
+        image: anrs125/nginx:v34
         ports:
         - containerPort: 80
         securityContext:
@@ -32,17 +32,17 @@ spec:
               - SETGID
               - DAC_OVERRIDE
               - FOWNER
-        volumeMounts:
-        - name: sensitive-files
-          mountPath: /etc/nginx/sensitive
-        # ✅ PVC mounted here — shadow file persists across restarts
-        - name: shadow-pvc
-          mountPath: /data
-      volumes:
-      - name: sensitive-files
-        secret:
-          secretName: nginx-sensitive-secret
-          defaultMode: 0600
+      #   volumeMounts:
+      #   - name: sensitive-files
+      #     mountPath: /etc/nginx/sensitive
+      #   # ✅ PVC mounted here — shadow file persists across restarts
+      #   - name: shadow-pvc
+      #     mountPath: /data
+      # volumes:
+      # - name: sensitive-files
+      #   secret:
+      #     secretName: nginx-sensitive-secret
+      #     defaultMode: 0600
       - name: shadow-pvc
         persistentVolumeClaim:
           claimName: nginx-shadow-pvc
